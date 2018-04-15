@@ -3,11 +3,6 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/')
-@app.route('/index')
-def index():
-	return render_template('index.html')
-
 UPLOAD_FOLDER = os.path.basename('uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -105,6 +100,10 @@ def dice_coef_loss(y_true, y_pred):
 
 # def test(model_to_test, input_im, current_fold, plane, rst_dir):
 
+@app.route('/')
+@app.route('/index')
+def index():
+	return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
