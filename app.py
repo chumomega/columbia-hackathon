@@ -1,9 +1,11 @@
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 @app.route('/index')
 def index():
 	return render_template('index.html')
@@ -12,10 +14,6 @@ def index():
 
 UPLOAD_FOLDER = os.path.basename('uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-import os
-import numpy as np
-import matplotlib.pyplot as plt
 
 from keras.models import load_model
 from keras import backend as K
