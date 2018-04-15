@@ -1,20 +1,13 @@
 import os
-import numpy as np
-import matplotlib.pyplot as plt
-#, methods = ['GET', 'POST']
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/')
-@app.route('/index')
-def index():
-	return render_template('index.html')
-
-
-
 UPLOAD_FOLDER = os.path.basename('uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 from keras.models import load_model
 from keras import backend as K
@@ -22,7 +15,7 @@ from keras import backend as K
 K.set_image_data_format('channels_last')  # Tensorflow dimension ordering
 
 cwd = os.getcwd()
-print (cwd)
+print cwd
 data_path  =  cwd + "/segmentation/data/"
 model_path = data_path + "models/"
 
@@ -104,17 +97,22 @@ def dice_coef(y_true, y_pred):
 def dice_coef_loss(y_true, y_pred):
     return  -dice_coef(y_true, y_pred)
 
-# def test(model_to_test, input_im, current_fold, plane, rst_dir):
+
+@app.route('/')
+def hello_world():
+    return render_template('index.html')
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     file = request.files['image']
     input_im = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    
-    print ("-"*50)
-    print ("loading model ", model_to_test)
-    print ("-"*50)
+    # save uploaded file
+    file.save(input_im)
+
+    print "-"*50
+    print "loading model ", model_to_test
+    print "-"*50
 
     model = load_model(model_path + model_to_test + '.h5', custom_objects={'dice_coef_loss': dice_coef_loss, 'dice_coef':dice_coef})
 
@@ -128,35 +126,24 @@ def upload_file():
     # for creating final prediction visualization
     pred = np.zeros_like(input_image)
 
-    try:
-        # crop each slice according to smallest bounding box of each slice
-        image_padded_ = pad_2d(input_image, plane, 0, im_x, im_y, im_z)
-        padded_prep = preprocess_front(preprocess(image_padded_))
-        pred_padded = (model.predict(padded_prep) > 0.5).astype(np.uint8).reshape(image_padded_.shape)
-        pred = pred_padded[0: input_image.shape[0], 0: input_image.shape[1]]
+    # crop each slice according to smallest bounding box of each slice
+    image_padded_ = pad_2d(input_image, plane, 0, im_x, im_y, im_z)
+    padded_prep = preprocess_front(preprocess(image_padded_))
+    pred_padded = (model.predict(padded_prep) > 0.5).astype(np.uint8).reshape(image_padded_.shape)
+    pred = pred_padded[0: input_image.shape[0], 0: input_image.shape[1]]
 
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 2, 1)
-        ax.set_title("input test image")
-        ax.imshow(input_image, cmap=plt.cm.gray)
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 2, 1)
+    ax.set_title("input test image")
+    ax.imshow(input_image, cmap=plt.cm.gray)
 
-        ax = fig.add_subplot(1, 2, 2)
-        ax.set_title("prediction")
-        ax.imshow(pred, cmap=plt.cm.gray)
+    ax = fig.add_subplot(1, 2, 2)
+    ax.set_title("prediction")
+    ax.imshow(pred, cmap=plt.cm.gray)
 
-        fig.canvas.set_window_title("%s"%input_im)
-        fig.savefig(pred_path + 'seg-output.jpg')
-        plt.show()
-
-    except KeyboardInterrupt:
-        raise ValueError("terminate because of keyboard interruption")
-    
-    # save uploaded file
-    file.save(input_im)
+    fig.canvas.set_window_title("%s"%input_im)
+    fig.savefig(pred_path + 'seg-output.jpg')
+    # fig.savefig(pred_path + '%s.jpg'%{file.filename})
+    # plt.show()
 
     return render_template('index.html')
-
-if __name__ =='__main__':
-	app.run(debug=True, use_reloader=True)
-    
-    
