@@ -1,11 +1,12 @@
 #import os
-import numpy as np
+#import numpy as np
 #import matplotlib.pyplot as plt
+#, methods = ['GET', 'POST']
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/', methods = ['GET', 'POST'])
+@app.route('/')
 @app.route('/index')
 def index():
 	return render_template('index.html')
