@@ -1,2 +1,3 @@
 *.pyc
 .DS_Store
+segmentation/data/models/unet_fd0_Z_ep10_lr1e-5.h5
