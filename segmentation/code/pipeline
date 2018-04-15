@@ -1,0 +1,33 @@
+#!/bin/sh
+
+DIR="${PWD}/.."
+# directory of project folder
+DATADIR="${DIR}/data"
+CODEDIR="${DIR}/repo"
+
+
+# which fold to experiment, set it to 0 / 1/ 2/ 3
+cur_fold=0
+
+# settings same as in fixed-point
+FOLDS=4
+LOW_RANGE=-100
+HIGH_RANGE=240
+ORGAN_NUMBER=1
+MARGIN=20
+# to build a uniform dimension for input of NN
+ZMAX=160
+YMAX=256
+XMAX=192
+# parameters of training
+epoch=10
+init_lr=1e-5
+# model to test
+model_test=unet_fd${cur_fold}_Z_ep${epoch}_lr${init_lr}
+# now just fix the input image
+input_image="${DIR}/../uploads/99.npy"
+
+# ---------------- programs -------------------
+
+# test the model
+python testvis.py ${DATADIR} ${model_test} ${cur_fold} Z ${ZMAX} ${YMAX} ${XMAX} ${HIGH_RANGE} ${LOW_RANGE} ${MARGIN} ${input_image}

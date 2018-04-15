@@ -99,9 +99,9 @@ def dice_coef_loss(y_true, y_pred):
 
 
 def test(model_to_test, input_im, current_fold, plane, rst_dir):
-    print("-"*50)
-    print("loading model ", model_to_test)
-    print("-"*50)
+    print "-"*50
+    print "loading model ", model_to_test
+    print "-"*50
 
     model = load_model(model_path + model_to_test + '.h5', custom_objects={'dice_coef_loss': dice_coef_loss, 'dice_coef':dice_coef})
 
@@ -123,7 +123,6 @@ def test(model_to_test, input_im, current_fold, plane, rst_dir):
         pred = pred_padded[0: input_image.shape[0], 0: input_image.shape[1]]
 
         fig = plt.figure()
-        plt.axis('off')
         ax = fig.add_subplot(1, 2, 1)
         ax.set_title("input test image")
         ax.imshow(input_image, cmap=plt.cm.gray)
@@ -137,7 +136,6 @@ def test(model_to_test, input_im, current_fold, plane, rst_dir):
         plt.show()
 
     except KeyboardInterrupt:
-        print('KeyboardInterrupt caught')
         raise ValueError("terminate because of keyboard interruption")
 
 
@@ -147,4 +145,4 @@ if __name__ == "__main__":
 
     test(model_to_test, input_image, cur_fold, plane, rst_path)
 
-    print("-----------test done, total time used: %s ------------"% (time.time() - start_time))
+    print "-----------test done, total time used: %s ------------"% (time.time() - start_time)
