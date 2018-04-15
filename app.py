@@ -106,11 +106,6 @@ def dice_coef_loss(y_true, y_pred):
 # def test(model_to_test, input_im, current_fold, plane, rst_dir):
 
 
-
-@app.route('/')
-def hello_world():
-    return render_template('index.html')
-
 @app.route('/upload', methods=['POST'])
 def upload_file():
     file = request.files['image']
